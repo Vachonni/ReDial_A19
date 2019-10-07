@@ -23,6 +23,11 @@ from fast_bert.data_cls import BertDataBunch
 
 
 
+######################
+###                ###
+###      DATA      ###
+###                ###
+######################
 
 
 DATA_PATH = Path('./sample_data/multi_label_toxic_comments/data/')     # path for data files (train and val)
@@ -47,5 +52,34 @@ databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
 
 
 
+
+######################
+###                ###
+###    LEARNER     ###
+###                ###
+######################
+
+
+from fast_bert.learner_cls import BertLearner
+from fast_bert.metrics import accuracy
+import logging
+
+logger = logging.getLogger()
+device_cuda = torch.device("cpu")
+metrics = [{'name': 'accuracy', 'function': accuracy}]
+
+learner = BertLearner.from_pretrained_model(
+						databunch,
+						pretrained_path='bert-base-uncased',
+						metrics=metrics,
+						device=device_cuda,
+						logger=logger,
+						output_dir='.',
+						finetuned_wgts_path=None,
+						warmup_steps=500,
+						multi_gpu=False,
+						is_fp16=True,
+						multi_label=True,
+						logging_steps=50)
 
 

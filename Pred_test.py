@@ -28,4 +28,9 @@ texts = [
          'People watching Netflix movies should die',
          'I fucking hate your face'
          ]
+
 multiple_predictions = predictor.predict_batch(texts)
+
+for i in range(len(multiple_predictions)):
+    print('\n\n',texts[i],'\n', multiple_predictions[i])
+    

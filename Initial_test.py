@@ -9,6 +9,7 @@ Just copied the FAST-BERT example from:
 
 
 @author: nicholas
+
 """
 
 from pathlib import Path
@@ -17,8 +18,6 @@ import torch
 
 
 from fast_bert.data_cls import BertDataBunch
-# from fast_bert.learner import BertLearner
-# from fast_bert.metrics import accuracy
 
 
 
@@ -39,8 +38,8 @@ LOG_PATH=Path('../logs/')       # path for log files to be stored
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='train.csv',
-                          val_file='val.csv',
+                          train_file='smallData.csv',
+                          val_file='smallData.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['toxic','severe_toxic','obscene','threat','insult','identity_hate'],
@@ -64,9 +63,17 @@ from fast_bert.learner_cls import BertLearner
 from fast_bert.metrics import accuracy
 import logging
 
+
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+#logger.setLevel('INFO')
+
+logger.info('will my logger print?')
+
 device_cuda = torch.device("cpu")
 metrics = [{'name': 'accuracy', 'function': accuracy}]
+
+print('hello')
 
 learner = BertLearner.from_pretrained_model(
 						databunch,
@@ -78,8 +85,98 @@ learner = BertLearner.from_pretrained_model(
 						finetuned_wgts_path=None,
 						warmup_steps=500,
 						multi_gpu=False,
-						is_fp16=True,
+						is_fp16=False,
 						multi_label=True,
-						logging_steps=50)
+						logging_steps=0)
+
+
+#%%
+
+######################
+###                ###
+###     TRAIN      ###
+###                ###
+######################
+
+print('hello again')
+
+learner.fit(epochs=1,
+			lr=6e-5,
+			validate=True,        	# Evaluate the model after each epoch
+			schedule_type="warmup_cosine",
+			optimizer_type="lamb")
+
+
+#%%
+
+######################
+###                ###
+###     SAVE       ###
+###                ###
+######################
+
+
+learner.save_model()
+
+
+#%%
+
+
+
+texts = ['I really love the Netflix original movies',
+		 'this movie is not worth watching']
+predictions = learner.predict_batch(texts)
+
+
+print('\n\n', predictions[0],'\n\n', predictions[1], '\n\n')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

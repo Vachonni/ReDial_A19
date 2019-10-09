@@ -60,7 +60,7 @@ databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
 
 
 from fast_bert.learner_cls import BertLearner
-from fast_bert.metrics import accuracy
+from fast_bert.metrics import accuracy_thresh
 import logging
 
 
@@ -71,7 +71,7 @@ logger = logging.getLogger()
 logger.info('will my logger print?')
 
 device_cuda = torch.device("cuda")
-metrics = [{'name': 'accuracy', 'function': accuracy}]
+metrics = [{'name': 'accuracy', 'function': accuracy_thresh}]
 
 print('hello')
 
@@ -100,7 +100,7 @@ learner = BertLearner.from_pretrained_model(
 
 print('hello again')
 
-learner.fit(epochs=100,
+learner.fit(epochs=50,
 			lr=6e-5,
 			validate=True,        	# Evaluate the model after each epoch
 			schedule_type="warmup_cosine",
@@ -122,22 +122,17 @@ learner.save_model()
 #%%
 
 
-
-texts = ['I really love the Netflix original movies',
-		 'this movie is not worth watching']
+texts = [
+        'I really love the Netflix original movies',
+		 'Jerk me jolly. I have a big penis, not to mention the species is thriving.',
+         'People watching Netflix movies should die',
+         'You are a big hairy ape like mamith.'
+         ]
 predictions = learner.predict_batch(texts)
 
 
-print('\n\n', predictions[0],'\n\n', predictions[1], '\n\n')
-
-
-
-
-
-
-
-
-
+for i in range(len(predictions)):
+    print('\n\n',texts[i],'\n', predictions[i])
 
 
 

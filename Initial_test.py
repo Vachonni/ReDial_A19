@@ -38,12 +38,12 @@ LOG_PATH=Path('../logs/')       # path for log files to be stored
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='smallData.csv',
-                          val_file='smallData.csv',
+                          train_file='train.csv',
+                          val_file='val.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['toxic','severe_toxic','obscene','threat','insult','identity_hate'],
-                          batch_size_per_gpu=16,
+                          batch_size_per_gpu=8,
                           max_seq_length=512,
                           multi_gpu=True,
                           multi_label=True,
@@ -70,7 +70,7 @@ logger = logging.getLogger()
 
 logger.info('will my logger print?')
 
-device_cuda = torch.device("cpu")
+device_cuda = torch.device("cuda")
 metrics = [{'name': 'accuracy', 'function': accuracy}]
 
 print('hello')
@@ -100,7 +100,7 @@ learner = BertLearner.from_pretrained_model(
 
 print('hello again')
 
-learner.fit(epochs=1,
+learner.fit(epochs=100,
 			lr=6e-5,
 			validate=True,        	# Evaluate the model after each epoch
 			schedule_type="warmup_cosine",

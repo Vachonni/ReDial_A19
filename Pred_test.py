@@ -24,9 +24,9 @@ predictor = BertClassificationPredictor(
 # Batch predictions
 texts = [
         'I really love the Netflix original movies',
-		 'this movie is not worth watching',
+		 'Jerk me jolly. I have a big penis, not to mention the species is thriving.',
          'People watching Netflix movies should die',
-         'I fucking hate your face'
+         'You are a big hairy ape like mamith.'
          ]
 
 multiple_predictions = predictor.predict_batch(texts)

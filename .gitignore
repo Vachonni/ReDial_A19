@@ -3,3 +3,5 @@
 /tensorboard/*
 /apex/*
 /sample_data/multi_label_toxic_comments/data/cache/*
+/__pycache__/*
+fast_bert-1.4.2.tar.gz

@@ -174,7 +174,7 @@ logger = logging.getLogger()
 
 logger.info('will my logger print?')
 
-device_cuda = torch.device("cpu")
+device_cuda = torch.device("cuda")
 metrics = [{'name': 'NDCG', 'function': ndcg}]
 
 print('hello')
@@ -185,7 +185,7 @@ learner = BertLearner.from_pretrained_model(
 						metrics=metrics,
 						device=device_cuda,
 						logger=logger,
-						output_dir='.',
+						output_dir=MODEL_PATH,
 						finetuned_wgts_path=None,
 						warmup_steps=500,
 						multi_gpu=False,

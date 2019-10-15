@@ -242,7 +242,6 @@ class BertLearner(object):
     def fit(self, epochs, lr, validate=True, schedule_type="warmup_cosine", optimizer_type='lamb'):
         
         tensorboard_dir = self.output_dir/'tensorboard'
-        print(tensorboard_dir)
         tensorboard_dir.mkdir(exist_ok=True)
         print(tensorboard_dir)
         

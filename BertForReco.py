@@ -53,8 +53,8 @@ from data_reco import BertDataBunch
 
 DATA_PATH = Path(args.data_path + '/sample_data/multi_label_toxic_comments/data/')     # path for data files (train and val)
 LABEL_PATH = Path(args.data_path + '/sample_data/multi_label_toxic_comments/label/')  # path for labels file
-MODEL_PATH = Path(args.log_path + '/models/')    # path for model artifacts to be stored
-LOG_PATH = Path(args.log_path + '/logs/')       # path for log files to be stored
+MODEL_PATH = Path(args.log_path)    # path for model artifacts to be stored
+LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,

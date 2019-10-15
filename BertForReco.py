@@ -59,8 +59,8 @@ LOG_PATH = Path(args.log_path + '/logs/')       # path for log files to be store
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='RECOsmallDATA.csv',
-                          val_file='RECOsmallDATA.csv',
+                          train_file='RECOsmallData.csv',
+                          val_file='RECOsmallData.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['ratings'],

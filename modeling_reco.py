@@ -18,11 +18,10 @@ from torch import Tensor
 
 
 # *** CHANGE ***
-from torch.nn import BCEWithLogitsLoss 
+from torch.nn import BCELoss, BCEWithLogitsLoss 
 
 
 def loss_fct(logits, labels):
-    criterion = BCEWithLogitsLoss()
     # If we are in the recommender case (defined by the fact labels are 
     # of format [(item_id, rating)]): use MASKED BCE
     if len(labels.shape) == 3:
@@ -34,10 +33,10 @@ def loss_fct(logits, labels):
                 ratings_mask[i, itemid] = 1
         masked_ratings = ratings * ratings_mask
         
-        return criterion(logits, masked_ratings)        
+        return BCELoss()(logits.softmax(dim=1), masked_ratings)        
     # If not, use regular BCE
     else:
-        return criterion(logits, labels.view(logits.shape))
+        return BCEWithLogitsLoss()(logits, labels.view(logits.shape))
 # *** CHANGE ***    
 
 
@@ -191,7 +190,7 @@ class BertForMultiLabelSequenceClassification(BertForSequenceClassification):
         pooled_output = outputs[1]
 
         pooled_output = self.dropout(pooled_output)
-        logits = self.classifier(pooled_output)
+        logits = self.classifier(pooled_output)  #self.classfier just a Linear layer giving righ size
 
         # add hidden states and attention if they are here
         outputs = (logits,) + outputs[2:]

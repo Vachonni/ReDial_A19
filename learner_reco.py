@@ -407,13 +407,18 @@ class BertLearner(object):
             nb_eval_steps += 1
             nb_eval_examples += inputs['input_ids'].size(0)
                 
-            
+# *** CHANGE ***            
+            # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
+            if len(inputs['labels'].shape) == 3:
+                logits = logits.softmax(dim=1)
+# *** CHANGE ***
             if all_logits is None:
                 all_logits = logits
             else:
                 all_logits = torch.cat((all_logits, logits), 0)
 
             if all_labels is None:
+# *** CHANGE ***
                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
                 if len(inputs['labels'].shape) == 3:
                     ratings = torch.zeros_like(logits)
@@ -425,7 +430,7 @@ class BertLearner(object):
                 else:
                     all_labels = inputs['labels']
             else:   
-                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
+                # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
                 if len(inputs['labels'].shape) == 3:
                     ratings = torch.zeros_like(logits)
                     for i, list_itemid_rating in enumerate(inputs['labels']):
@@ -435,7 +440,7 @@ class BertLearner(object):
                 # Other cases
                 else:
                     all_labels =  torch.cat((all_labels, inputs['labels']), 0)
-            
+# *** CHANGE ***
  
             if preds is None:
                 preds = logits.detach().cpu().numpy()
@@ -495,7 +500,10 @@ class BertLearner(object):
             with torch.no_grad():
                 outputs = self.model(**inputs)
                 logits = outputs[0]
-                if self.multi_label:
+                if logits.size(-1) > 10000:
+                    logits = logits.softmax(dim=1)
+                elif self.multi_label:
+                    print('$$$$$$$$$$$$$$$$$$  SHOULD NOT BE HERE FOR RECOMMENDAION')
                     logits = logits.sigmoid()
                 elif len(self.data.labels) == 2:
                     logits = logits.sigmoid()
@@ -506,9 +514,14 @@ class BertLearner(object):
                 all_logits = logits.detach().cpu().numpy()
             else:
                 all_logits = np.concatenate((all_logits, logits.detach().cpu().numpy()), axis=0)
-
-
-        result_df =  pd.DataFrame(all_logits, columns=self.data.labels)
+# *** CHANGE ***
+        # Treat the recommender case 
+        if self.data.labels == ['ratings']:
+            result_df =  pd.DataFrame(all_logits)
+        # Other cases
+        else:
+            result_df =  pd.DataFrame(all_logits, columns=self.data.labels)
         results = result_df.to_dict('record')
-
+# *** CHANGE ***
+        
         return [sorted(x.items(), key=lambda kv: kv[1], reverse=True) for x in results]

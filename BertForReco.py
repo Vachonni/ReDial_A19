@@ -18,6 +18,8 @@ From FAST-BERT example at:
 
 """
 
+
+
 from pathlib import Path
 import torch
 # import apex
@@ -68,6 +70,92 @@ from fast_bert.metrics import accuracy_thresh
 import logging
 
 
+
+
+
+###########################  SHOUULD BE ADDED TO METRICS ###########################
+
+import numpy as np 
+topx = 100
+
+# DCG (Discounted Cumulative Gain)   
+# Needed to compare rankings when the numbre of item compared are not the same
+# and/or when relevance is not binary
+
+def _DCG(v, top):
+    """
+    V is vector of ranks, lowest is better
+    top is the max rank considered 
+    Relevance is 1 if items in rank vector, 0 else
+    """
+    
+    discounted_gain = 0
+    
+    for i in np.round(v):
+        if i <= top:
+            discounted_gain += 1/np.log2(i+1)
+
+    return round(discounted_gain, 2)
+
+def _nDCG(v, top, nb_values=0):
+    """
+    DCG normalized with what would be the best evaluation.
+    
+    nb_values is the max number of good values there is. If not specified or bigger 
+    than top, assumed to be same as top.
+    """
+    if nb_values == 0 or nb_values > top: nb_values = top
+    dcg = _DCG(v, top)
+    idcg = _DCG(np.arange(nb_values)+1, top)
+    
+    return round(dcg/idcg, 2)
+    
+# RR (Reciprocal Rank)
+    
+# Gives a value in [0,1] for the first relevant item in list.
+# 1st = 1 and than lower until cloe to 0.
+# Only consern with FIRST relevant item in the list.
+    
+def RR(v):
+    return 1/np.min(v)
+    
+def Ranking(all_values, values_to_rank, topx = 0):
+    """
+    Takes 2 numpy array and return, for all values in values_to_rank,
+    the ranks, average ranks, MRR and nDCG for ranks smaller than topx
+    """    
+    # If topx not mentionned (no top), it's for all the values
+    if topx == 0: topx = len(all_values)
+    
+    # Initiate ranks
+    ranks = np.zeros(len(values_to_rank))
+    
+    for i,v in enumerate(values_to_rank):
+        ranks[i] = len(all_values[all_values > v]) + 1
+      
+    return ranks
+
+
+def ndcg(logits, labels):
+    # For all batches
+    all_ndcg = np.zeros(len(logits))
+    for i in range(len(logits)):
+        idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
+        values_to_rank = logits[i][idx_with_positive_mention]
+        ranks = Ranking(logits[i], values_to_rank, topx)
+        all_ndcg[i] = _nDCG(ranks, topx, len(values_to_rank))
+    
+    return all_ndcg.mean() 
+ 
+# More possibilities    
+#    if ranks.sum() == 0: print('warning, should always be at least one rank')
+#    return ranks, ranks.mean(), round(float((1/ranks).mean()),4), RR(ranks), ndcg
+    
+###########################  SHOUULD BE ADDED TO METRICS ###########################
+    
+
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 #logger.setLevel('INFO')
@@ -75,7 +163,7 @@ logger = logging.getLogger()
 logger.info('will my logger print?')
 
 device_cuda = torch.device("cpu")
-metrics = [{'name': 'accuracy_tresh', 'function': accuracy_thresh}]
+metrics = [{'name': 'NDCG', 'function': ndcg}]
 
 print('hello')
 
@@ -136,7 +224,7 @@ predictions = learner.predict_batch(texts)
 
 
 for i in range(len(predictions)):
-    print('\n\n',texts[i],'\n', predictions[i])
+    print('\n\n',texts[i],'\n', predictions[i][:5])
 
 
 

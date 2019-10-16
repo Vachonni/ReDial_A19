@@ -35,6 +35,8 @@ parser.add_argument('--log_path', type=str, metavar='', default='.',\
                     help='Path where all infos will be saved.')
 parser.add_argument('--data_path', type=str, metavar='', default='.', \
                     help='Path to datasets')
+parser.add_argument('--epoch', type=int, metavar='', default=1, \
+                    help='Qt of epoch')
 
 args = parser.parse_args()
 
@@ -204,7 +206,7 @@ learner = BertLearner.from_pretrained_model(
 
 print('hello again')
 
-learner.fit(epochs=10,
+learner.fit(epochs=args.epochs,
 			lr=6e-5,
 			validate=True,        	# Evaluate the model after each epoch
 			schedule_type="warmup_cosine",

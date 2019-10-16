@@ -22,13 +22,15 @@ from torch.nn import BCELoss, BCEWithLogitsLoss
 
 
 def loss_fct(logits, labels):
-    # If we are in the recommender case (defined by the fact labels are 
-    # of format [(item_id, rating)]): use MASKED BCE
+    # If we are in the recommender case, defined by the fact labels are 
+    # of format [(item_id, rating)]: use MASKED BCE
     if len(labels.shape) == 3:
         ratings = torch.zeros_like(logits)
         ratings_mask = torch.zeros_like(logits)
         for i, list_itemid_rating in enumerate(labels):
             for (itemid, rating) in list_itemid_rating:
+                # If 'filling' of ratings (for uniform dim) have been reached 
+                if itemid == -1: break
                 ratings[i, itemid] = rating
                 ratings_mask[i, itemid] = 1
         masked_ratings = ratings * ratings_mask

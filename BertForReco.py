@@ -51,7 +51,7 @@ args = parser.parse_args()
 from data_reco import BertDataBunch
 
 
-DATA_PATH = Path(args.data_path + '/sample_data/multi_label_toxic_comments/data/')     # path for data files (train and val)
+DATA_PATH = Path(args.data_path + '/sample_data/ReDial/')     # path for data files (train and val)
 LABEL_PATH = Path(args.data_path + '/sample_data/multi_label_toxic_comments/label/')  # path for labels file
 MODEL_PATH = Path(args.log_path)    # path for model artifacts to be stored
 LOG_PATH = Path(args.log_path)       # path for log files to be stored
@@ -59,8 +59,8 @@ LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='RECOsmallData.csv',
-                          val_file='RECOsmallData.csv',
+                          train_file='SmallAll.csv',
+                          val_file='SmallAll.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['ratings'],

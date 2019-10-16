@@ -204,7 +204,7 @@ learner = BertLearner.from_pretrained_model(
 
 print('hello again')
 
-learner.fit(epochs=1,
+learner.fit(epochs=10,
 			lr=6e-5,
 			validate=True,        	# Evaluate the model after each epoch
 			schedule_type="warmup_cosine",

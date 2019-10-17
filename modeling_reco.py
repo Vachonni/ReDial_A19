@@ -8,8 +8,17 @@ Adapting file fast-bert.modeling.py for recommendation because:
     1- we need a MASKED_BCE evaluation of the loss
 
 
+>>
+>>>>
+>>>>>>   **** CHANGE ONLY DONE FOR BertForMultiLabelSequenceClassification ****
+>>>>
+>>
+
+
 @author: nicholas
 """
+
+
 
 from transformers import BertForSequenceClassification, BertModel, BertConfig, XLNetForSequenceClassification, RobertaModel, RobertaConfig, BertPreTrainedModel, RobertaForSequenceClassification, DistilBertForSequenceClassification
 

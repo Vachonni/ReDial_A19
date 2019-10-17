@@ -416,7 +416,8 @@ class BertLearner(object):
                 all_logits = logits
             else:
                 all_logits = torch.cat((all_logits, logits), 0)
-
+            
+            # First batch
             if all_labels is None:
 # *** CHANGE ***
                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
@@ -429,6 +430,7 @@ class BertLearner(object):
                 # Other cases
                 else:
                     all_labels = inputs['labels']
+            # ...after first batch 
             else:   
                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
                 if len(inputs['labels'].shape) == 3:
@@ -500,10 +502,12 @@ class BertLearner(object):
             with torch.no_grad():
                 outputs = self.model(**inputs)
                 logits = outputs[0]
+# *** CHANGE ***
                 if logits.size(-1) > 10000:
                     logits = logits.softmax(dim=1)
                 elif self.multi_label:
                     print('$$$$$$$$$$$$$$$$$$  SHOULD NOT BE HERE FOR RECOMMENDAION')
+# *** CHANGE ***
                     logits = logits.sigmoid()
                 elif len(self.data.labels) == 2:
                     logits = logits.sigmoid()

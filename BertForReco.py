@@ -11,7 +11,15 @@ BERT adapted for recommendation
 From FAST-BERT example at: 
     https://medium.com/huggingface/introducing-fastbert-a-simple-deep-learning-library-for-bert-models-89ff763ad384
     Up to date code is in: fast_bert-1.4.2.tar.gz
-
+    
+    
+    
+    When using Bert for Recommendation:
+        use ONE label column in the data with header 'ratings' and 
+        label_col = ['ratings']. 
+        'ratings' column shoul have all same number of 
+        examples (fill with (-1, 0) if necessary).
+    
 
 
 @author: nicholas
@@ -53,8 +61,8 @@ args = parser.parse_args()
 from data_reco import BertDataBunch
 
 
-DATA_PATH = Path(args.data_path + '/sample_data/ReDial/')     # path for data files (train and val)
-LABEL_PATH = Path(args.data_path + '/sample_data/multi_label_toxic_comments/label/')  # path for labels file
+DATA_PATH = Path(args.data_path + '/Data/ReDial/')     # path for data files (train and val)
+LABEL_PATH = Path(args.data_path + '/Data/multi_label_toxic_comments/label/')  # path for labels file
 MODEL_PATH = Path(args.log_path)    # path for model artifacts to be stored
 LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
@@ -176,7 +184,7 @@ logger = logging.getLogger()
 
 logger.info('will my logger print?')
 
-device_cuda = torch.device("cuda")
+device_cuda = torch.device("cpu")
 metrics = [{'name': 'NDCG', 'function': ndcg}]
 
 print('hello')

@@ -77,7 +77,7 @@ for line in open(PATH, 'r'):
         questions_dict = conv_dict['respondentQuestions']
     else:
         continue
-   
+    
 #    # Finds max number of movie rated
 #    qt_movies_rated = len(questions_dict)
 #    if qt_movies_rated > max_nb_movie_rated: max_nb_movie_rated = qt_movies_rated 
@@ -117,11 +117,11 @@ validset = ReDialRatings2List[train_size:]
 #%%
 
 
-# Creating a DataFrame
-
-df = pd.DataFrame(validset)
-df.columns = ['ConvID', 'text', 'ratings']
-df.to_csv('Val.csv', index=False)
+## Creating a DataFrame and saving it
+#
+#df = pd.DataFrame(validset)
+#df.columns = ['ConvID', 'text', 'ratings']
+#df.to_csv('Val.csv', index=False)
 
 
 

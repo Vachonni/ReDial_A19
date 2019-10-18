@@ -439,7 +439,6 @@ class BertLearner(object):
             else:   
                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
                 if len(inputs['labels'].shape) == 3:
-                    l_qt_movies_mentionned = []
                     ratings = torch.zeros_like(logits)
                     for i, list_itemid_rating in enumerate(inputs['labels']):
                         for (itemid, rating) in list_itemid_rating:

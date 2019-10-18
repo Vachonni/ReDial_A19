@@ -422,9 +422,14 @@ class BertLearner(object):
 # *** CHANGE ***
                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
                 if len(inputs['labels'].shape) == 3:
+                    l_qt_movies_mentionned = []
                     ratings = torch.zeros_like(logits)
                     for i, list_itemid_rating in enumerate(inputs['labels']):
                         for (itemid, rating) in list_itemid_rating:
+                            # If  itemid is -2, it's number of movies mentioned indicator
+                            if itemid == -2: 
+                                l_qt_movies_mentionned.append(rating)
+                                continue
                             ratings[i, itemid] = rating
                     all_labels = ratings
                 # Other cases
@@ -434,9 +439,14 @@ class BertLearner(object):
             else:   
                 # Treat the recommender case (a 3D input (batch, nb of ratings, itemid+rating))
                 if len(inputs['labels'].shape) == 3:
+                    l_qt_movies_mentionned = []
                     ratings = torch.zeros_like(logits)
                     for i, list_itemid_rating in enumerate(inputs['labels']):
                         for (itemid, rating) in list_itemid_rating:
+                            # If  itemid is -2, it's number of movies mentioned indicator
+                            if itemid == -2: 
+                                l_qt_movies_mentionned.append(rating)
+                                continue
                             ratings[i, itemid] = rating
                     all_labels = torch.cat((all_labels, ratings), 0)
                 # Other cases
@@ -455,7 +465,12 @@ class BertLearner(object):
         
         # Evaluation metrics
         for metric in self.metrics:
-            validation_scores[metric['name']] = metric['function'](all_logits, all_labels)
+            if metric['name'] == 'NDCG_CHRONO':
+                validation_scores[metric['name']] = \
+                    metric['function'](all_logits, all_labels, l_qt_movies_mentionned)
+            else:
+                validation_scores[metric['name']] = \
+                    metric['function'](all_logits, all_labels)
 
         results = {'loss': eval_loss }
         results.update(validation_scores)

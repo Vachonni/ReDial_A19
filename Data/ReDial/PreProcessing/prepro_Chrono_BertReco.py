@@ -127,9 +127,11 @@ for line in open(PATH, 'r'):
                 fill_size = max_nb_movie_rated - len(l_ratings_to_come)
                 filling = [(-1,0)] * fill_size
                 l_ratings_to_come += filling
+                # Add the number of movies mentioned
+                l_ratings_to_come = [(-2,count_messages)] + l_ratings_to_come
                 # Put list of ratings in text type (for .csv purposes in BertReco)
                 l_ratings_to_come = str(l_ratings_to_come)               
-                data.append([str(ConvID)+'_'+str(count_messages), text_buffer, \
+                data.append([ConvID, text_buffer, \
                              l_ratings_to_come])
                 count_messages += len(all_movies)
                 
@@ -145,17 +147,17 @@ for line in open(PATH, 'r'):
         # if so: add convID+count_message, text_buffer, 
         
     count_conv += 1
-  #  if count_conv > 7: break
+    if count_conv > 7: break
    
 
 #%%
 
 
-## Creating a DataFrame and saving it
-#
-#df = pd.DataFrame(validset)
-#df.columns = ['ConvID', 'text', 'ratings']
-#df.to_csv('Val.csv', index=False)
+# Creating a DataFrame and saving it
+
+df = pd.DataFrame(train_data)
+df.columns = ['ConvID', 'text', 'ratings']
+df.to_csv('ChronoSmall.csv', index=False)
 
 
 

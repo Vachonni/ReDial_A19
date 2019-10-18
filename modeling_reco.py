@@ -26,6 +26,8 @@ import torch
 from torch import Tensor
 
 
+
+
 # *** CHANGE ***
 from torch.nn import BCELoss, BCEWithLogitsLoss 
 
@@ -38,6 +40,8 @@ def loss_fct(logits, labels):
         ratings_mask = torch.zeros_like(logits)
         for i, list_itemid_rating in enumerate(labels):
             for (itemid, rating) in list_itemid_rating:
+                # If  itemid is -2, it's number of movies mentioned indicator
+                if itemid == -2: continue
                 # If 'filling' of ratings (for uniform dim) have been reached 
                 if itemid == -1: break
                 ratings[i, itemid] = rating
@@ -49,6 +53,9 @@ def loss_fct(logits, labels):
     else:
         return BCEWithLogitsLoss()(logits, labels.view(logits.shape))
 # *** CHANGE ***    
+
+
+
 
 
 class DistilBertForMultiLabelSequenceClassification(DistilBertForSequenceClassification):

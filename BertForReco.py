@@ -69,8 +69,8 @@ LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='ChronoTrain.csv',
-                          val_file='ChronoVal.csv',
+                          train_file='ChronoSmall.csv',
+                          val_file='ChronoSmall.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['ratings'],
@@ -98,7 +98,9 @@ from fast_bert.metrics import accuracy_thresh
 ###########################  SHOUULD BE ADDED TO METRICS ###########################
 
 import numpy as np 
+from statistics import mean
 topx = 100
+max_movies_mentions = 10           # max number of movies mentions considered
 
 # DCG (Discounted Cumulative Gain)   
 # Needed to compare rankings when the numbre of item compared are not the same
@@ -159,7 +161,9 @@ def Ranking(all_values, values_to_rank, topx = 0):
 
 
 def ndcg(logits, labels):
-    # For all batches
+    """
+    Bert metric, average of all batches
+    """
     all_ndcg = np.zeros(len(logits))
     for i in range(len(logits)):
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
@@ -168,7 +172,31 @@ def ndcg(logits, labels):
         all_ndcg[i] = _nDCG(ranks, topx, len(values_to_rank))
     
     return all_ndcg.mean() 
+
+
+def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
+    """
+    Bert metric, ndcg by qt of movies mentioned before prediction, 
+    average over all batches
+    """ 
+    ndcg_by_qt_movies_mentioned = [[]] * max_movies_mentions    
+    for i in range(len(logits)):
+        idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
+        values_to_rank = logits[i][idx_with_positive_mention]
+        ranks = Ranking(logits[i], values_to_rank, topx) 
+        # Get qt of movies mentioned and add ndcg to the right list
+        qt_movies_mentioned_this_example = l_qt_movies_mentioned[i]
+        ndcg_by_qt_movies_mentioned[qt_movies_mentioned_this_example].append(\
+                                        _nDCG(ranks, topx, len(values_to_rank)))
+    # Take the mean
+    mean_ndcg_by_qt_movies_mentioned = []
+    for l_ndcg in ndcg_by_qt_movies_mentioned:
+        if l_ndcg == []: mean_ndcg_by_qt_movies_mentioned.append(0)
+        else: mean_ndcg_by_qt_movies_mentioned.append(mean(l_ndcg))
+    
+    return mean_ndcg_by_qt_movies_mentioned                            
  
+    
 # More possibilities    
 #    if ranks.sum() == 0: print('warning, should always be at least one rank')
 #    return ranks, ranks.mean(), round(float((1/ranks).mean()),4), RR(ranks), ndcg
@@ -184,8 +212,8 @@ logger = logging.getLogger()
 
 logger.info('will my logger print?')
 
-device_cuda = torch.device("cpu")
-metrics = [{'name': 'NDCG', 'function': ndcg}]
+device_cuda = torch.device("cuda")
+metrics = [{'name': 'NDCG_CHRONO', 'function': ndcg_chrono}]
 
 print('hello')
 

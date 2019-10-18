@@ -103,12 +103,16 @@ for line in open(PATH, 'r'):
 
     # Get all texts 1x1     
     text_buffer = ""
-    count_messages = 1
+    count_messages = 0
     for message in conv_dict['messages']:
         # scan for @ movies mentions
         all_movies = re_filmId.findall(message['text'])
         # If movies are mentionned 
         if all_movies != []:
+            if text_buffer == "":   # First utterance has a movie mention
+                text_buffer += message['text']+' '  # Add new text
+                count_messages += len(all_movies)   # Count this mention
+                continue            # But don't try to predict on empty str
             # return the last one, as integer, without '@'
             movie_found_ReDID = int(all_movies[-1][1:])
             movie_found = ReDID2uID[int(movie_found_ReDID)]
@@ -116,7 +120,8 @@ for line in open(PATH, 'r'):
             l_ratings_to_come = []
             for i, (movieuID, rating) in enumerate(l_ratings):
                 if movie_found == movieuID:
-                    l_ratings_to_come = l_ratings[i:]
+                    l_ratings_to_come = l_ratings[(i+1):]
+                    break
             if l_ratings_to_come != []:              
                 # Fill to have list of same lenght
                 fill_size = max_nb_movie_rated - len(l_ratings_to_come)
@@ -126,9 +131,11 @@ for line in open(PATH, 'r'):
                 l_ratings_to_come = str(l_ratings_to_come)               
                 data.append([str(ConvID)+'_'+str(count_messages), text_buffer, \
                              l_ratings_to_come])
+                count_messages += len(all_movies)
+                
         # Go to next text
-        text_buffer += message['text']
-        count_messages += 1
+        text_buffer += message['text']+' '
+        
             
     # Put data in the right set 
     if count_conv in valid_indices:
@@ -138,7 +145,7 @@ for line in open(PATH, 'r'):
         # if so: add convID+count_message, text_buffer, 
         
     count_conv += 1
-    if count_conv > 7: break
+  #  if count_conv > 7: break
    
 
 #%%
@@ -154,6 +161,25 @@ for line in open(PATH, 'r'):
 
 
 #%% self.date = date_obj.group().strip()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

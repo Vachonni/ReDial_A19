@@ -179,7 +179,7 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
     Bert metric, ndcg by qt of movies mentioned before prediction, 
     average over all batches
     """ 
-    ndcg_by_qt_movies_mentioned = [[]] * max_movies_mentions    
+    ndcg_by_qt_movies_mentioned = [[]] * (max_movies_mentions + 1)    
     for i in range(len(logits)):
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
         values_to_rank = logits[i][idx_with_positive_mention]

@@ -147,7 +147,7 @@ for line in open(PATH, 'r'):
         # if so: add convID+count_message, text_buffer, 
         
     count_conv += 1
-    if count_conv > 7: break
+#    if count_conv > 7: break
    
 
 #%%
@@ -155,9 +155,9 @@ for line in open(PATH, 'r'):
 
 # Creating a DataFrame and saving it
 
-df = pd.DataFrame(train_data)
-df.columns = ['ConvID', 'text', 'ratings']
-df.to_csv('ChronoSmall.csv', index=False)
+#df = pd.DataFrame(train_data)
+#df.columns = ['ConvID', 'text', 'ratings']
+#df.to_csv('ChronoSmall.csv', index=False)
 
 
 

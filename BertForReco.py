@@ -181,6 +181,7 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
     """ 
     ndcg_by_qt_movies_mentioned = [[]] * (max_movies_mentions + 1)    
     for i in range(len(logits)):
+        print(l_qt_movies_mentioned)
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
         values_to_rank = logits[i][idx_with_positive_mention]
         ranks = Ranking(logits[i], values_to_rank, topx) 
@@ -188,6 +189,7 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
         qt_movies_mentioned_this_example = l_qt_movies_mentioned[i]
         if qt_movies_mentioned_this_example > max_movies_mentions:
             qt_movies_mentioned_this_example = max_movies_mentions
+        print(qt_movies_mentioned_this_example)
         ndcg_by_qt_movies_mentioned[qt_movies_mentioned_this_example].append(\
                                         _nDCG(ranks, topx, len(values_to_rank)))
 #    # Take the mean

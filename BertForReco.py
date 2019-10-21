@@ -146,7 +146,7 @@ def RR(v):
 def Ranking(all_values, values_to_rank, topx = 0):
     """
     Takes 2 numpy array and return, for all values in values_to_rank,
-    the ranks, average ranks, MRR and nDCG for ranks smaller than topx
+    the ranks
     """    
     # If topx not mentionned (no top), it's for all the values
     if topx == 0: topx = len(all_values)
@@ -179,7 +179,7 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
     Bert metric, ndcg by qt of movies mentioned before prediction, 
     average over all batches
     """ 
-    ndcg_by_qt_movies_mentioned = [[]] * (max_movies_mentions + 1)    
+    ndcg_by_qt_movies_mentioned = [[] for i in range(max_movies_mentions + 1)]    
     for i in range(len(logits)):
         print(l_qt_movies_mentioned)
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
@@ -192,15 +192,14 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
         print(qt_movies_mentioned_this_example)
         ndcg_by_qt_movies_mentioned[qt_movies_mentioned_this_example].append(\
                                         _nDCG(ranks, topx, len(values_to_rank)))
-#    # Take the mean
-#    mean_ndcg_by_qt_movies_mentioned = []
-#    for l_ndcg in ndcg_by_qt_movies_mentioned:
-#        if l_ndcg == []: mean_ndcg_by_qt_movies_mentioned.append(0)
-#        else: mean_ndcg_by_qt_movies_mentioned.append(mean(l_ndcg))
-#    
-#    return mean_ndcg_by_qt_movies_mentioned    
-
-    return ndcg_by_qt_movies_mentioned                        
+    # Take the mean
+    mean_ndcg_by_qt_movies_mentioned = []
+    for l_ndcg in ndcg_by_qt_movies_mentioned:
+        if l_ndcg == []: mean_ndcg_by_qt_movies_mentioned.append(0)
+        else: mean_ndcg_by_qt_movies_mentioned.append(mean(l_ndcg))
+    
+    return mean_ndcg_by_qt_movies_mentioned    
+                      
  
     
 # More possibilities    

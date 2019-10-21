@@ -69,8 +69,8 @@ LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='ChronoSmall.csv',
-                          val_file='ChronoSmall.csv',
+                          train_file='ChronoTrain.csv',
+                          val_file='ChronoVal.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['ratings'],
@@ -181,7 +181,6 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
     """ 
     ndcg_by_qt_movies_mentioned = [[] for i in range(max_movies_mentions + 1)]    
     for i in range(len(logits)):
-        print(l_qt_movies_mentioned)
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
         values_to_rank = logits[i][idx_with_positive_mention]
         ranks = Ranking(logits[i], values_to_rank, topx) 
@@ -189,7 +188,6 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
         qt_movies_mentioned_this_example = l_qt_movies_mentioned[i]
         if qt_movies_mentioned_this_example > max_movies_mentions:
             qt_movies_mentioned_this_example = max_movies_mentions
-        print(qt_movies_mentioned_this_example)
         ndcg_by_qt_movies_mentioned[qt_movies_mentioned_this_example].append(\
                                         _nDCG(ranks, topx, len(values_to_rank)))
     # Take the mean

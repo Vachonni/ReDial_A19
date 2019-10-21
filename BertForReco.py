@@ -69,8 +69,8 @@ LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
-                          train_file='ChronoTrain.csv',
-                          val_file='ChronoVal.csv',
+                          train_file='ChronoSmall.csv',
+                          val_file='ChronoSmall.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['ratings'],
@@ -190,13 +190,15 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
             qt_movies_mentioned_this_example = max_movies_mentions
         ndcg_by_qt_movies_mentioned[qt_movies_mentioned_this_example].append(\
                                         _nDCG(ranks, topx, len(values_to_rank)))
-    # Take the mean
-    mean_ndcg_by_qt_movies_mentioned = []
-    for l_ndcg in ndcg_by_qt_movies_mentioned:
-        if l_ndcg == []: mean_ndcg_by_qt_movies_mentioned.append(0)
-        else: mean_ndcg_by_qt_movies_mentioned.append(mean(l_ndcg))
-    
-    return mean_ndcg_by_qt_movies_mentioned                            
+#    # Take the mean
+#    mean_ndcg_by_qt_movies_mentioned = []
+#    for l_ndcg in ndcg_by_qt_movies_mentioned:
+#        if l_ndcg == []: mean_ndcg_by_qt_movies_mentioned.append(0)
+#        else: mean_ndcg_by_qt_movies_mentioned.append(mean(l_ndcg))
+#    
+#    return mean_ndcg_by_qt_movies_mentioned    
+
+    return ndcg_by_qt_movies_mentioned                        
  
     
 # More possibilities    

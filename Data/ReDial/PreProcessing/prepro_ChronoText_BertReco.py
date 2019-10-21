@@ -45,11 +45,6 @@ ReDID2uID = np.load(ReDID2uID_PATH).item()
 #text_data = np.load('/Users/nicholas/GitRepo/DialogueMovieReco/Data/DataConvFilm.npy')
 
 
-### TO EXTRACT Movies Mentions with @
-re_filmId = re.compile('@[0-9]{5,6}')
-
-
-
 
 #%%
 
@@ -66,6 +61,43 @@ valid_indices = indices[:998]
 
 train_data = []
 valid_data = []
+
+
+#%%
+
+### TO EXTRACT Movies Mentions with @
+re_filmId = re.compile('@[0-9]{5,6}')
+### TO EXTRACT Date after movie title
+re_date = re.compile(' *\([0-9]{4}\)| *$') 
+
+#ls_film_ids = []
+#ls_film = []
+df_filmID = pd.read_csv('/Users/nicholas/Desktop/data_10021/movies_db.csv')
+
+
+# Function called by .sub
+# A re method to substitue matching pattern in a string
+# Here, substitute film ID with film NL title
+# This code also creates list of film Ids and list of film str with (dates)
+
+def filmIdtoString(match):
+    filmId = int(match.group()[1:])                  # Remove @ and from str to int
+    if df_filmID[df_filmID['movieId'] == filmId].empty:
+        print('Unknow movie', filmId)
+        film_str = str(filmId)          # Put film ID since can't find title
+    else:
+        film_str_with_date = df_filmID[df_filmID['movieId'] == filmId][' movieName'].values[0]
+        film_str = re_date.sub("", film_str_with_date)  # Remove date for more NL
+  #  ls_film.append(film_str)
+  #  print(film_str)
+    
+    return film_str
+
+
+
+
+
+
 
 #%%
 
@@ -110,7 +142,10 @@ for line in open(PATH, 'r'):
         # If movies are mentionned 
         if all_movies != []:
             if text_buffer == "":   # First utterance has a movie mention
-                text_buffer += message['text']+' '  # Add new text
+ #               text_buffer += message['text']+' '  # Add new text
+                message_in_NL = re_filmId.sub(filmIdtoString, message['text']) 
+                text_buffer += message_in_NL+' '  # Add new text with NL title 
+                
                 count_messages += len(all_movies)   # Count this mention
                 continue            # But don't try to predict on empty str
             # return the last one, as integer, without '@'
@@ -136,8 +171,9 @@ for line in open(PATH, 'r'):
                 count_messages += len(all_movies)
                 
         # Go to next text
-        text_buffer += message['text']+' '
-        
+  #      text_buffer += message['text']+' '
+        message_in_NL = re_filmId.sub(filmIdtoString, message['text']) 
+        text_buffer += message_in_NL+' '  # Add new text with NL title 
             
     # Put data in the right set 
     if count_conv in valid_indices:
@@ -147,7 +183,7 @@ for line in open(PATH, 'r'):
         # if so: add convID+count_message, text_buffer, 
         
     count_conv += 1
-#    if count_conv > 7: break
+ #   if count_conv > 7: break
    
 
 #%%
@@ -155,9 +191,9 @@ for line in open(PATH, 'r'):
 
 # Creating a DataFrame and saving it
 
-df = pd.DataFrame(valid_data)
+df = pd.DataFrame(train_data)
 df.columns = ['ConvID', 'text', 'ratings']
-df.to_csv('ChronoVal.csv', index=False)
+df.to_csv('ChronoTextTrain.csv', index=False)
 
 
 

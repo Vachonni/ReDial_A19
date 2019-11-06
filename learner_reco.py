@@ -91,6 +91,8 @@ class BertLearner(object):
 # If in recommender case        
         if dataBunch.labels == ['ratings']:
             config = config_class.from_pretrained(pretrained_path, num_labels=48272)
+            config.output_hidden_states=True
+            print('---------config:', config)
 # If multi-label
         else:
             config = config_class.from_pretrained(pretrained_path, num_labels=len(dataBunch.labels))
@@ -153,6 +155,7 @@ class BertLearner(object):
         if self.multi_gpu:
             self.n_gpu = torch.cuda.device_count()
         
+        print('---------config:',model.config.output_hidden_states)
     
     
     def freeze_to(self, n:int)->None:

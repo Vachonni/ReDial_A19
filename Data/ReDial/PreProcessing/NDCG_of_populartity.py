@@ -193,11 +193,13 @@ train_populatity_repeat = torch.cat(valid_df.shape[0]*[train_popularity.unsqueez
 
 #%%
 
-
+# NDCG as in output of model was always the most popular movies of the train set
 ndcg_chrono(train_populatity_repeat, valid_ratings, qt_movies_mentioned)
+
 
 #%%
 
+# NDCG as in output of model was random
 ndcg_chrono(torch.rand(valid_df.shape[0], 48272),valid_ratings, qt_movies_mentioned)
 
 

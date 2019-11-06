@@ -45,6 +45,8 @@ parser.add_argument('--data_path', type=str, metavar='', default='.', \
                     help='Path to datasets')
 parser.add_argument('--epoch', type=int, metavar='', default=1, \
                     help='Qt of epoch')
+parser.add_argument('--DEVICE', type=str, metavar='', default='cuda', \
+                    help='cuda ou cpu')
 
 args = parser.parse_args()
 
@@ -210,7 +212,7 @@ logger = logging.getLogger()
 
 logger.info('will my logger print?')
 
-device_cuda = torch.device("cuda")
+device_cuda = torch.device(args.DEVICE)
 metrics = [{'name': 'NDCG_CHRONO', 'function': ndcg_chrono}, {'name': 'NDCG', 'function': ndcg}]
 
 print('hello')

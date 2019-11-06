@@ -241,6 +241,8 @@ learner = BertLearner.from_pretrained_model(
 ######################
 
 print('hello again')
+logger.info('-------*-*-*- Model will be trained with the following config: {}'.format( \
+            learner.model.config))
 
 learner.fit(epochs=args.epoch,
 			lr=6e-5*4,

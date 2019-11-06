@@ -27,6 +27,8 @@ From FAST-BERT example at:
 """
 
 from pathlib import Path
+import random
+import numpy as np
 import torch
 # import apex
 
@@ -52,6 +54,29 @@ args = parser.parse_args()
 
 
 
+
+######################
+###                ###
+###      SEED      ###
+###                ###
+######################
+
+manualSeed = 1
+# Python
+random.seed(manualSeed)
+# Numpy
+np.random.seed(manualSeed)
+# Torch
+torch.manual_seed(manualSeed)
+# Torch with GPU
+if args.DEVICE == "cuda":
+    torch.cuda.manual_seed(manualSeed)
+    torch.cuda.manual_seed_all(manualSeed)
+    torch.backends.cudnn.enabled = False 
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+            
+            
 
 
 ######################

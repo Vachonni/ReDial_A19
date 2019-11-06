@@ -205,13 +205,20 @@ class BertForMultiLabelSequenceClassification(BertForSequenceClassification):
         # pdb.set_trace()
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
-        pooled_output = outputs[1]
+        """ """  
+        # Get the hidden outputs 
+        hidden_outputs = outputs[2][0]   # 0 is the last hidden state layer
+        # Take the average
+        pooled_output = hidden_outputs.mean(dim=1)
 
+     #   pooled_output = outputs[1]
+        """ """
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)  #self.classfier just a Linear layer giving righ size
 
         # add hidden states and attention if they are here
-        outputs = (logits,) + outputs[2:]
+        outputs = (logits,) 
+        """ + outputs[2:]   NO NEED FOR HIDDEN EXCEPT FOR LOGITS AND LOST EVAL """ 
 
         if labels is not None:
      #       loss_fct = BCEWithLogitsLoss()

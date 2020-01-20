@@ -93,6 +93,9 @@ LABEL_PATH = Path(args.data_path)    # path for labels file
 MODEL_PATH = Path(args.log_path)     # path for model artifacts to be stored
 LOG_PATH = Path(args.log_path)       # path for log files to be stored
 
+# Insure MODEL_PATH and LOG_PATH exit
+MODEL_PATH.mkdir(exist_ok=True)
+
 
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',

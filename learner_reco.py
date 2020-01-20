@@ -146,6 +146,9 @@ class BertLearner(object):
         self.max_steps = -1
         self.weight_decay = 0.0
         self.model_type = data.model_type
+# *** CHANGE ***   To save when NDCG improves
+        self.best_NDCG = 0
+# *** CHANGE ***       
         
         self.output_dir = output_dir
         
@@ -356,6 +359,16 @@ class BertLearner(object):
                 results = self.validate()
                 for key, value in results.items():
                     self.logger.info("eval_{} after epoch {}: {}: ".format(key, (epoch + 1), value))
+
+# *** CHANGE ***   To save when NDCG improves
+                actual_NDCG = results['NDCG']
+                if actual_NDCG > self.best_NDCG:
+                   self.logger.info("NDCG Improved. Saving...")
+                   self.save_model()                 
+                   self.logger.info("\n\n\n ...saved")
+                   self.best_NDCG = actual_NDCG 
+# *** CHANGE ***                    
+                
                 
             # Log metrics
             self.logger.info("lr after epoch {}: {}".format((epoch + 1), scheduler.get_lr()[0]))

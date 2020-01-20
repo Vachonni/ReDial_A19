@@ -283,7 +283,7 @@ learner.fit(epochs=args.epoch,
 ######################
 
 
-learner.save_model()
+# learner.save_model()
 
 
 #%%

@@ -365,7 +365,7 @@ class BertLearner(object):
                 if actual_NDCG > self.best_NDCG:
                    self.logger.info("NDCG Improved. Saving...")
                    self.save_model()                 
-                   self.logger.info("\n\n\n ...saved")
+                   self.logger.info("\n                       ...saved")
                    self.best_NDCG = actual_NDCG 
 # *** CHANGE ***                    
                 

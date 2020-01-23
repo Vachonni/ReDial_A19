@@ -24,8 +24,9 @@ data = np.load('/Users/nicholas/ReDial_Utils/list_ReDial_ratings_ReDOrId2ConvOrI
 #%%
 # Load Item info (Abstract or KB)
 
-dict_MovieAbstract = np.load('/Users/nicholas/ReDial_CF2_MLP_dot/Data/DataReDial/str_MovieTitlesGenres_RT.npy', \
+dict_MovieText = np.load('/Users/nicholas/ReDial_CF2_MLP_dot/Data/DataReDial/str_MovieTitlesGenres_RT.npy', \
                              allow_pickle=True)
+
 
 
 #%%
@@ -47,10 +48,12 @@ def Padding(l_user, l_ratings) -> list:
 
 #%%
 for i in range(len(data)):
-
+    # Convert 2 list of ratings to paddedlist of tuples
     data[i,2] = Padding(data[i,1], data[i,2])
-
-    data[i,1] = dict_MovieAbstract[data[i,0]][0]
+    # Get the movie text (insure no nan)
+    text = dict_MovieText[data[i,0]][0]
+    if text=='': text = ' '
+    data[i,1] = text
 
 #%%
 

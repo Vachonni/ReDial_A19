@@ -243,8 +243,8 @@ def Recall(logits, labels):
         values_to_rank = logits[i][idx_with_positive_mention]
         ranks = Ranking(logits[i], values_to_rank, topx)
         recalls[i,0] = 1 if np.min(ranks) <= 1 else 0
-        recalls[i,0] = 1 if np.min(ranks) <= 10 else 0
-        recalls[i,0] = 1 if np.min(ranks) <= 50 else 0
+        recalls[i,1] = 1 if np.min(ranks) <= 10 else 0
+        recalls[i,2] = 1 if np.min(ranks) <= 50 else 0
     
     return recalls.mean(0).tolist()
 

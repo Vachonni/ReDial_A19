@@ -238,6 +238,8 @@ def Recall(logits, labels):
     recalls = np.zeros((len(logits), 3))
     for i in range(len(logits)):
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
+        # If there are not positive ratings, ignore (We try to make good recos)
+        if idx_with_positive_mention == []: continue
         values_to_rank = logits[i][idx_with_positive_mention]
         ranks = Ranking(logits[i], values_to_rank, topx)
         recalls[i,0] = 1 if np.min(ranks) <= 1 else 0

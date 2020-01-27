@@ -235,7 +235,7 @@ def Recall(logits, labels):
     Bert metric, average of all batches.
     Returns Recall @1 @10 @50
     """
-    recalls = np.zeros(len(logits), 3)
+    recalls = np.zeros((len(logits), 3))
     for i in range(len(logits)):
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
         values_to_rank = logits[i][idx_with_positive_mention]
@@ -292,7 +292,7 @@ learner = BertLearner.from_pretrained_model(
 print('hello again')
 
 learner.fit(epochs=args.epoch,
-			lr=6e-5*4,
+			lr=6e-5*4*4,
 			validate=True,        	# Evaluate the model after each epoch
 			schedule_type="warmup_cosine",
 			optimizer_type="lamb")

@@ -228,9 +228,28 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
         else: mean_ndcg_by_qt_movies_mentioned.append(mean(l_ndcg))
     
     return mean_ndcg_by_qt_movies_mentioned    
+
+
+def Recall(logits, labels):
+    """
+    Bert metric, average of all batches.
+    Returns Recall @1 @10 @50
+    """
+    recalls = np.zeros(len(logits), 3)
+    for i in range(len(logits)):
+        idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
+        values_to_rank = logits[i][idx_with_positive_mention]
+        ranks = Ranking(logits[i], values_to_rank, topx)
+        recalls[i,0] = 1 if np.min(ranks) <= 1 else 0
+        recalls[i,0] = 1 if np.min(ranks) <= 10 else 0
+        recalls[i,0] = 1 if np.min(ranks) <= 50 else 0
+    
+    return recalls.mean(0).tolist()
+
     
 ###########################  SHOUULD BE ADDED TO METRICS ###########################
     
+
 
 import logging
 
@@ -241,7 +260,9 @@ logger = logging.getLogger()
 logger.info('will my logger print?')
 
 device_cuda = torch.device(args.DEVICE)
-metrics = [{'name': 'NDCG_CHRONO', 'function': ndcg_chrono}, {'name': 'NDCG', 'function': ndcg}]
+metrics = [{'name': 'NDCG_CHRONO', 'function': ndcg_chrono}, \
+           {'name': 'NDCG', 'function': ndcg}, \
+           {'name': 'Recalls', 'function': Recall}]
 
 print('hello')
 

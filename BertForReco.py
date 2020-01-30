@@ -212,6 +212,8 @@ def ndcg_chrono(logits, labels, l_qt_movies_mentioned):
     ndcg_by_qt_movies_mentioned = [[] for i in range(max_movies_mentions + 1)]    
     for i in range(len(logits)):
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
+        # If there are not positive ratings, ignore (We try to make good recos)
+        if idx_with_positive_mention == []: continue
         values_to_rank = logits[i][idx_with_positive_mention]
         ranks = Ranking(logits[i], values_to_rank, topx) 
         # Get qt of movies mentioned and add ndcg to the right list

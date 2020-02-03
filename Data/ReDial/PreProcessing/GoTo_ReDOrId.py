@@ -27,7 +27,7 @@ from ast import literal_eval
 UiD_2_ReDOrId= np.load('/Users/nicholas/ReDial_Utils/UiD_2_ReDOrId.npy', allow_pickle=True).item()
 
 # Load csv in numpy object array
-UiD_data = pd.read_csv('/Users/nicholas/ReDial_A19/Data/ReDial/ChronoTextSR/Val.csv'\
+UiD_data = pd.read_csv('/Users/nicholas/ReDial_A19/Data/ReDial/NEXTTextSRGenres/Val.csv'\
                        ).values
 
 
@@ -55,4 +55,4 @@ for i in range(len(UiD_data)):
     
 df = pd.DataFrame(UiD_data)
 df.columns = ['ConvID', 'text', 'ratings']
-df.to_csv('/Users/nicholas/ReDial_A19/Data/ReDial/ChronoTextSR_ReOrId/Val.csv', index=False)
+df.to_csv('/Users/nicholas/ReDial_A19/Data/ReDial/NEXTTextSRGenres_ReDOrId/Val.csv', index=False)

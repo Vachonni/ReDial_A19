@@ -237,7 +237,10 @@ def Recall(logits, labels):
     Bert metric, average of all batches.
     Returns Recall @1 @10 @50
     """
-    recalls = np.zeros((len(logits), 6))
+    recalls = np.zeros((len(logits), 9))
+    good_recall1 = []
+    good_recall10 = []
+    good_recall50 = []
     for i in range(len(logits)):
         idx_with_positive_mention = labels[i].nonzero().flatten().tolist()
         # If there are not positive ratings, ignore (We try to make good recos)
@@ -250,8 +253,19 @@ def Recall(logits, labels):
         recalls[i,3] = 1 if np.min(ranks[0]) <= 1 else 0
         recalls[i,4] = 1 if np.min(ranks[0]) <= 10 else 0
         recalls[i,5] = 1 if np.min(ranks[0]) <= 50 else 0        
+        
+        # Treat every rank for that same prediction (same logits)
+        for r in ranks:
+            good_recall1.append(r <= 1)
+            good_recall10.append(r <= 10)
+            good_recall50.append(r <= 50)
+            
+    recalls = recalls.mean(0)
+    recalls[6] = np.mean(good_recall1)
+    recalls[7] = np.mean(good_recall10)
+    recalls[8] = np.mean(good_recall50)
     
-    return recalls.mean(0).tolist()
+    return recalls.tolist()
 
     
 ###########################  SHOUULD BE ADDED TO METRICS ###########################

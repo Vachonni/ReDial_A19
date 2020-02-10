@@ -38,7 +38,9 @@ def loss_fct(logits, labels):
     if len(labels.shape) == 3:
         ratings = torch.zeros_like(logits)
         ratings_mask = torch.zeros_like(logits)
+        # Treat each "user's/conversation's" labels in the batch
         for i, list_itemid_rating in enumerate(labels):
+            # Treat each rated item in this "conversation"
             for (itemid, rating) in list_itemid_rating:
                 # If  itemid is -2, it's number of movies mentioned indicator
                 if itemid == -2: continue
@@ -46,9 +48,9 @@ def loss_fct(logits, labels):
                 if itemid == -1: break
                 ratings[i, itemid] = rating
                 ratings_mask[i, itemid] = 1
-        masked_ratings = ratings * ratings_mask
+   #     masked_ratings = ratings * ratings_mask
         
-        return BCELoss()(logits.softmax(dim=1), masked_ratings)        
+        return BCEWithLogitsLoss()(logits * ratings_mask, ratings)        
     # If not, use regular BCE
     else:
         return BCEWithLogitsLoss()(logits, labels.view(logits.shape))

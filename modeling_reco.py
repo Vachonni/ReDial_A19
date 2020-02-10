@@ -29,28 +29,36 @@ from torch import Tensor
 
 
 # *** CHANGE ***
-from torch.nn import BCELoss, BCEWithLogitsLoss 
+from torch.nn import BCELoss, BCEWithLogitsLoss, CrossEntropyLoss 
 
 
 def loss_fct(logits, labels):
     # If we are in the recommender case, defined by the fact labels are 
     # of format [(item_id, rating)]: use MASKED BCE
     if len(labels.shape) == 3:
-        ratings = torch.zeros_like(logits)
-        ratings_mask = torch.zeros_like(logits)
+        # Set first one because can'tbe empty (removed later)
+        logits_by_rating = logits[0]
+        ratings = []
+        
         # Treat each "user's/conversation's" labels in the batch
         for i, list_itemid_rating in enumerate(labels):
             # Treat each rated item in this "conversation"
-            for (itemid, rating) in list_itemid_rating:
+            for (itemid, _) in list_itemid_rating:
                 # If  itemid is -2, it's number of movies mentioned indicator
                 if itemid == -2: continue
                 # If 'filling' of ratings (for uniform dim) have been reached 
                 if itemid == -1: break
-                ratings[i, itemid] = rating
-                ratings_mask[i, itemid] = 1
+                logits_by_rating = torch.stack(logits_by_rating, logits[i], dim=0)
+                ratings.append(itemid)
+                
    #     masked_ratings = ratings * ratings_mask
-        
-        return BCELoss()((logits * ratings_mask).softmax(dim=1), ratings)        
+   
+        # Remove first one
+        logits_by_rating = logits_by_rating[1:]  
+        # Put ratings in torch format
+        ratings = torch.tensor(ratings)
+   
+        return CrossEntropyLoss()(logits_by_rating, ratings)        
     # If not, use regular BCE
     else:
         return BCEWithLogitsLoss()(logits, labels.view(logits.shape))

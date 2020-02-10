@@ -57,6 +57,9 @@ def loss_fct(logits, labels):
         logits_by_rating = logits_by_rating[1:]  
         # Put ratings in torch format
         ratings = torch.tensor(ratings)
+        # Put on cuda if availalble
+        if torch.cuda.is_available():
+            ratings = ratings.to('cuda')
    
         return CrossEntropyLoss()(logits_by_rating, ratings)        
     # If not, use regular BCE

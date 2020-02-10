@@ -48,7 +48,7 @@ def loss_fct(logits, labels):
                 if itemid == -2: continue
                 # If 'filling' of ratings (for uniform dim) have been reached 
                 if itemid == -1: break
-                logits_by_rating = torch.stack(logits_by_rating, logits[i], dim=0)
+                logits_by_rating = torch.stack([logits_by_rating, logits[i]], dim=0)
                 ratings.append(itemid)
                 
    #     masked_ratings = ratings * ratings_mask

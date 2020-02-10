@@ -37,7 +37,7 @@ def loss_fct(logits, labels):
     # of format [(item_id, rating)]: use MASKED BCE
     if len(labels.shape) == 3:
         # Set first one because can'tbe empty (removed later)
-        logits_by_rating = logits[0]
+        logits_by_rating = logits[0].view(1,-1)
         ratings = []
         
         # Treat each "user's/conversation's" labels in the batch

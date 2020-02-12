@@ -90,7 +90,7 @@ class BertLearner(object):
 # *** CHANGE ***
 # If in recommender case        
         if dataBunch.labels == ['ratings']:
-            config = config_class.from_pretrained(pretrained_path, num_labels=48272)
+            config = config_class.from_pretrained(pretrained_path, num_labels=7013)
 # If multi-label
         else:
             config = config_class.from_pretrained(pretrained_path, num_labels=len(dataBunch.labels))

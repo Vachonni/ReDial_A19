@@ -207,7 +207,7 @@ for line in open(PATH, 'r'):
 
 # Creating a DataFrame and saving it
 
-df = pd.DataFrame(train_data)
+df = pd.DataFrame(valid_data)
 df.columns = ['ConvID', 'text', 'ratings']
 df.to_csv('RecoText_SR_all_ratings.csv', index=False)
 

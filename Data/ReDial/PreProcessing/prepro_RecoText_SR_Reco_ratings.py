@@ -118,7 +118,7 @@ def filmIdtoString(match):
 ###############
     
 
-def MovieMentionsToRatings(conv_obj, movie_mentions, l_ratings):
+def MovieMentionsToRatings(movie_mentions, l_ratings):
     """
     NOTE: len of movies_mentions and recommended_ratings may not be equal
           (if no associated ratings found (e.g.:not in movie form, not rated)) 
@@ -137,9 +137,9 @@ def MovieMentionsToRatings(conv_obj, movie_mentions, l_ratings):
 
 
 
-def RatingsToBertFormat(conv_obj, movies_message, movies_conv, l_ratings):
+def RatingsToBertFormat(movies_message, movies_conv, l_ratings):
     
-    recommended_ratings = MovieMentionsToRatings(conv_obj, movies_message, l_ratings)
+    recommended_ratings = MovieMentionsToRatings(movies_message, l_ratings)
    
     # Case where movies were mentioned but not rated
     if recommended_ratings == []:
@@ -190,7 +190,7 @@ for line in open(PATH, 'r'):
     ### TREATING MESSAGES (by chunks)    
     
     # Treat FIRST message chunk in this conversation
-    buffer = messages_by_chunks[0]['text']
+    buffer = re_filmId.sub(filmIdtoString, messages_by_chunks[0]['text']) # @ to film in NL
     unique_movie_mentions_message = set(re_filmId.findall(messages_by_chunks[0]['text']))
     unique_movie_mentions_conv = unique_movie_mentions_message
     
@@ -203,9 +203,10 @@ for line in open(PATH, 'r'):
                                         unique_movie_mentions_conv
        # print(undup_movie_mentions_message)
                                         
-        # If it's message from Recommender and has new movie mentions, add data point
+        # If it's message from Recommender and has new movie mentions that 
+        # are rated in the movie form, add data point
         if message['speaker_token'] == 'R:: ' and undup_movie_mentions_message != set():
-            ratigns_BERT_format = RatingsToBertFormat( conv_obj, \
+            ratigns_BERT_format = RatingsToBertFormat( \
                                                  undup_movie_mentions_message, 
                                                  unique_movie_mentions_conv,
                                                  l_ratings)
@@ -216,7 +217,7 @@ for line in open(PATH, 'r'):
         
         unique_movie_mentions_conv = unique_movie_mentions_conv.union( \
                                         undup_movie_mentions_message)
-        buffer += ' ' + message['text']
+        buffer += ' ' + re_filmId.sub(filmIdtoString, message['text'])
           
 
             
@@ -229,7 +230,7 @@ for line in open(PATH, 'r'):
 
         
     count_conv += 1
- #   if count_conv > 7: break
+   # if count_conv > 7: break
    
 
 
@@ -241,7 +242,7 @@ for line in open(PATH, 'r'):
 ###############
 df = pd.DataFrame(train_data)
 df.columns = ['ConvID', 'text', 'ratings']
-df.to_csv('RecoText_SR_Reco_ratings_ReDOrId_NOstrfilm.csv', index=False)
+df.to_csv('RecoText_SR_Reco_ratings_ReDOrId.csv', index=False)
 
 
 

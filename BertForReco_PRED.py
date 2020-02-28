@@ -290,7 +290,7 @@ print('hello')
 
 learner = BertLearner.from_pretrained_model(
 						databunch,
-						pretrained_path=args.log_path+args.Pre_model,
+						pretrained_path=args.log_path+args.Pre_model+'/model_out',
 						metrics=metrics,
 						device=device_cuda,
 						logger=logger,

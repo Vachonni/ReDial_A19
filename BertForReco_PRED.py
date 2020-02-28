@@ -49,7 +49,8 @@ parser.add_argument('--epoch', type=int, metavar='', default=1, \
                     help='Qt of epoch')
 parser.add_argument('--DEVICE', type=str, metavar='', default='cuda', \
                     help='cuda ou cpu')
-
+parser.add_argument('--Pre_model', type=str, metavar='', default='/ChronoTextSR_ReDOrId', \
+                    help='cuda ou cpu')
 args = parser.parse_args()
 
 
@@ -100,7 +101,7 @@ MODEL_PATH.mkdir(exist_ok=True)
 databunch = BertDataBunch(DATA_PATH, LABEL_PATH,
                           tokenizer='bert-base-uncased',
                           train_file='Train.csv',
-                          val_file='Val.csv',
+                          val_file='Val_chris.csv',
                           label_file='labels.csv',
                           text_col='text',
                           label_col=['ratings'],
@@ -289,7 +290,7 @@ print('hello')
 
 learner = BertLearner.from_pretrained_model(
 						databunch,
-						pretrained_path='bert-base-uncased',
+						pretrained_path=args.log_path+args.Pre_model,
 						metrics=metrics,
 						device=device_cuda,
 						logger=logger,
@@ -310,13 +311,13 @@ learner = BertLearner.from_pretrained_model(
 ###                ###
 ######################
 
-print('hello again')
-
-learner.fit(epochs=args.epoch,
-			lr=6e-5*4,
-			validate=True,        	# Evaluate the model after each epoch
-			schedule_type="warmup_cosine",
-			optimizer_type="lamb")
+#print('hello again')
+#
+#learner.fit(epochs=args.epoch,
+#			lr=6e-5*4,
+#			validate=True,        	# Evaluate the model after each epoch
+#			schedule_type="warmup_cosine",
+#			optimizer_type="lamb")
 
 
 #%%
@@ -333,18 +334,18 @@ learner.fit(epochs=args.epoch,
 
 #%%
 
-
-texts = [
-        'I really love the Netflix original movies',
-		 'Jerk me jolly. I have a big penis, not to mention the species is thriving.',
-         'People watching Netflix movies should die',
-         'You are a big hairy ape like mamith.'
-         ]
-predictions = learner.predict_batch(texts)
+######################
+###                ###
+###     PRED       ###
+###                ###
+######################
 
 
-for i in range(len(predictions)):
-    print('\n\n',texts[i],'\n', predictions[i][:5])
+results = learner.validate()
+                
+for key, value in results.items():
+    print("eval_{}: {}: ".format(key, value))
+
 
 
 
